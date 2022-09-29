@@ -1,19 +1,26 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const RandomNumber = () => {
     const [randNumber, setRandomNumber] = useState<number>()
+    const [isPending, setIsPending] = useState<boolean>(true)
 
-    const handleClick = () => {
-        axios.get("http://localhost:8080/rng")
-            .then((response) => setRandomNumber(response.data.NUMBER))
-    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            axios.get("http://localhost:8080/rng")
+                .then((response) => {
+                    setRandomNumber(response.data.number)
+                }
+                )
+                .then(() => setIsPending(false))
+
+        }, 1000)
+    }, [])
 
     return (
         <div>
-            <button 
-                className="font-bold bg-red-300 hover:bg-red-500 active:bg-red-700 text-white"
-                onClick={handleClick}>Random Number</button>
+            {isPending && <div>Loading...</div>}
             <h1>{randNumber}</h1>
         </div>
     )
